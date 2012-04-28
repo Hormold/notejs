@@ -14,16 +14,17 @@
 	}
 	function $(id){return document.getElementById(id);}
 	var wiki={
-		nowWelcome:0, nowEdit:0,
+		nowWelcome:0, nowEdit:0,nowWatching:"",
 		load: function (){
 			if(localStorage.getItem(table)!==null){
-				this.content=JSON.parse(localStorage.getItem('wiki'));
+				this.content=JSON.parse(localStorage.getItem(table));
 			}else{
 				this.content=Array({title:def_name,text:"Hello, this is a NoteJS v 0.1.\nSimple wiki+html syntax support html5 (localStorage) based notebook.\nYou can not delete or rename this start page. Just edit.\nAuthor: Hormold (Nikita A.) - [http://about.hormold.ru]\n"});
-			}			
+			}
 		},
 		save: function(){
 			json=JSON.stringify(this.content);
+			
 			localStorage.setItem(table,json.replace("null,","").replace(",null",""));
 		},
 		add: function (title,content){
@@ -34,7 +35,7 @@
 			}
 		},
 		edit: function(title){
-			this.nowEdit=1;
+			this.nowEdit=title;
 			document.getElementById("wiki_title").value=title;
 			nowWelcome=0;n1=null;
 			_.each(this.content,function(num,key){
@@ -102,6 +103,7 @@
 					this.draw();
 				}else{this.edit(name);utils.focus("wiki_text");}
 			}
+			localStorage.setItem(table+"_last",name);
 		},		
 		open: function(name){
 			tmp=null;
@@ -160,7 +162,8 @@
 		},
 		
 		init: function(){
-			if(!this.open(def_name)){this.draw(this.content);}
+			if(localStorage.getItem(table+"_last")){this.open2(localStorage.getItem(table+"_last"));}else{
+			if(!this.open(def_name)){this.draw(this.content);}}
 		}
 	};
 	var utils={
@@ -227,30 +230,11 @@
 
 (function () {
     
-var extendString = true;
+//var extendString = true;
+String.prototype.wiki2html = wiki2html;
 
-if (extendString) {
-    String.prototype.wiki2html = wiki2html;
-    String.prototype.iswiki = iswiki;
-} else {
-    window.wiki2html = wiki2html;
-    window.iswiki = iswiki;
-}
-
-// utility function to check whether it's worth running through the wiki2html
-function iswiki(s) {
-    if (extendString) {
-        s = this;
-    }
-
-    return !!(s.match(/^[\s{2} `#\*='{2}]/m));
-}
-
-// the regex beast...
-function wiki2html(s) {
-    if (extendString) {
-        s = this;
-    }
+function wiki2html() {
+    s=this;
     
     // lists need to be done using a function to allow for recusive calls
     function list(str) {
@@ -293,6 +277,7 @@ function wiki2html(s) {
         .replace(/''(.*?)''/g, function (m, l) { // italic
             return '<em>' + l + '</em>';
         })
+	
     
         .replace(/[^\[](http[^\[\s]*)/g, function (m, l) { // normal link
             return '<a href="' + l + '">' + l + '</a>';
@@ -303,6 +288,8 @@ function wiki2html(s) {
             var link = p.shift();
             return '<a href="' + link + '">' + (p.length ? p.join(' ') : link) + '</a>';
         })
+		
+		
     
         .replace(/\[\[(.*?)\]\]/g, function (m, l) { // internal link or image
             var p = l.split(/\|/);
@@ -310,7 +297,7 @@ function wiki2html(s) {
 
             if (link.match(/^Image:(.*)/)) {
                 // no support for images - since it looks up the source from the wiki db :-(
-                return m;
+                return "<img src='"+m+"'/>";
             } else {
                 return '<a href="javascript:wiki.open2(\'' + link + '\');">' + (p.length ? p.join('|') : link) + '</a>';
             }
