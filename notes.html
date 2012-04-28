@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>NoteJS</title>
+	<script type="text/javascript" src="notes.js"></script>
+	<script type="text/javascript" src="_.js"></script>
+	<script>wiki.load();</script>
+	<style>
+	h1{font-family: fixedsys, consolas, monospace;}
+	.beta{font-size:30%;}
+	body {
+	font-family:arial,helvetica;
+	color:#000;
+	background-color:#E1E7EE;
+	}
+	
+	#title {
+	font-family: fixedsys, consolas, monospace;
+	color:#841;
+	font-size:1.6em;
+	font-weight:700;
+	}
+
+	#time {
+	color:#666;
+	font-size:0.8em;
+	font-style:italic;
+	}
+
+	#text {
+	display:block;
+	font-family:arial, helvetica;
+	font-size:12px;
+	line-height:16px;
+	padding-top:6px;
+	}
+	
+	#wiki{
+	padding-top:3px;
+	}
+
+	#wiki_form_div {
+	float:left;
+	position:fixed;
+	top:0;
+	border-right:1px solid #DEDEDE;
+	width:370px;
+	left:0;
+	min-height:60em;
+	max-height:200em;
+	height:100%;
+	background-color:#FFF;
+	padding-left:10px;
+	}
+
+	#buttons {
+	position:fixed;
+	right:10px;
+	}
+	
+	.n{color:#841 !important;}
+	</style>
+</head>
+<body onload="wiki.init();document.onkeydown = utils.hotkeys;" onunload="wiki.save();">
+	
+	<div id="wiki_form_div">
+	<h1>NoteJS<sup class="beta">(Beta)</sup></h1>
+	<input type="text" placeholder="Search" id="search"><button onClick="wiki.search($('search').value);">Search</button><br /><br />
+		<input type="hidden" name="wiki_id" id="wiki_id" value="save" />
+		<input type="text" name="wiki_title" id="wiki_title" placeholder="Title of wikipage" /><br />
+		<textarea id="wiki_text" onkeypress="return utils.ctrl_enter(event);" name="wiki_text" style="margin: 2px;width: 350px;height: 149px;" placeholder="# Here '''[[wiki]]''' text!"></textarea><br />
+		<button onClick="wiki.form();" id="submit">Save this page now</button><button onClick="wiki.clear();wiki.nowEdit=0;wiki.nowWelcome=0;">Cancle</button><br />
+		
+		<ul style="font-size:70%"><li><a href="javascript:utils.backup();">Backup</a></li>
+		<li><a href="javascript:utils.back();">Back</a> (Ctrl+Left)</li>
+		<li><a href="javascript:utils.list();">List of pages</a></li>
+		</ul>
+		<div id="backup" title="3 fast clicks and Ctrl+C" style="width:340px;font-size:0.5em;word-wrap: break-word;"></div>
+	</div>
+	<div id="wiki" style="padding-left:390px;"></div>
+</body>
+</html>
