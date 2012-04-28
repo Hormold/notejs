@@ -1,4 +1,5 @@
 	var def_name="Welcome";
+	var table="wiki"; //in localStorage
 	function tc(UNIX_timestamp){
 		var a = new Date(UNIX_timestamp);
 		var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -15,8 +16,7 @@
 	var wiki={
 		nowWelcome:0, nowEdit:0,
 		load: function (){
-			
-			if(localStorage.getItem('wiki')!==null){
+			if(localStorage.getItem(table)!==null){
 				this.content=JSON.parse(localStorage.getItem('wiki'));
 			}else{
 				this.content=Array({title:def_name,text:"Hello, this is a NoteJS v 0.1.\nSimple wiki+html syntax support html5 (localStorage) based notebook.\nYou can not delete or rename this start page. Just edit.\nAuthor: Hormold (Nikita A.) - [http://about.hormold.ru]\n"});
@@ -24,7 +24,7 @@
 		},
 		save: function(){
 			json=JSON.stringify(this.content);
-			localStorage.setItem("wiki",json.replace("null,","").replace(",null",""));
+			localStorage.setItem(table,json.replace("null,","").replace(",null",""));
 		},
 		add: function (title,content){
 			if(title!=="" & content!==""){
@@ -51,6 +51,7 @@
 			if(n1!==null){
 				document.getElementById("wiki_text").value=text;
 				document.getElementById("wiki_id").value=n1;
+				utils.focus("wiki_text");
 			}
 		},
 		delete: function(id){
@@ -74,7 +75,6 @@
 				this.clear();
 			}else{
 				key=document.getElementById("wiki_id").value;
-				console.log(this.nowWelcome);
 				if(this.nowWelcome==1){document.getElementById("wiki_title").value=def_name;this.nowWelcome=0;}
 				this.content[key]={time:new Date().getTime(),title:document.getElementById("wiki_title").value,text:document.getElementById("wiki_text").value};
 				this.open2(document.getElementById("wiki_title").value);this.clear();this.save();
@@ -82,7 +82,8 @@
 			}
 		},
 		make: function (num){
-			var compiled = _.template("<div id='wiki'><div id='title'><%= title %> <span id='buttons'><a href='javascript:wiki.delete(\"<%= title %>\");'>(X)</a> <a href='javascript:wiki.edit(\"<%= title %>\");'>(E)</a></span></div><div id='time'><%= time %></div><div id='text'><%= text %></div></div>");
+			if(num.title!=def_name){button="<a title='Delete' href='javascript:wiki.delete(\"<%= title %>\");'>(X)</a>";}else{button='';}
+			var compiled = _.template("<div id='wiki'><div id='title'><%= title %> <span id='buttons'>"+button+" <a href='javascript:wiki.edit(\"<%= title %>\");' title='Edit page'>(E)</a></span></div><div id='time'><%= time %></div><div id='text'><%= text %></div></div>");
 			return compiled({title : num.title,text: num.text.wiki2html(),time:num.time});
 		},
 		draw: function (content){
@@ -145,8 +146,8 @@
 	var utils={
 		bck:0,
 		backup: function(){
-			if(localStorage.getItem("wiki")!==null){
-				get=localStorage.getItem("wiki");
+			if(localStorage.getItem(table)!==null){
+				get=localStorage.getItem(table);
 				if(this.bck==1){get="";this.bck=0;}else{this.bck=1;}
 				$("backup").innerHTML=_.escape(get);
 			}			
@@ -158,6 +159,16 @@
 					wiki.open2(wiki.oldpage);
 				}
 			}
+		},
+		
+		insert: function(){
+			var a = new Date();
+			var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			var year = a.getFullYear();
+			var month = months[a.getMonth()];
+			var date = a.getDate();
+			var time = date+' '+month+' '+year;
+			$('wiki_title').value=$('wiki_title').value+time;
 		},
 		
 		focus: function(name){

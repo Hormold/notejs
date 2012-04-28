@@ -67,7 +67,7 @@
 	<h1>NoteJS<sup class="beta">(Beta)</sup></h1>
 	<input type="text" placeholder="Search" id="search"><button onClick="wiki.search($('search').value);">Search</button><br /><br />
 		<input type="hidden" name="wiki_id" id="wiki_id" value="save" />
-		<input type="text" name="wiki_title" id="wiki_title" placeholder="Title of wikipage" /><br />
+		<input type="text" name="wiki_title" id="wiki_title" placeholder="Title of page" /> <sup style="font-size:70%">(<a href="javascript:utils.insert();" style="color:black;">Insert the current date</a>)</sup><br />
 		<textarea id="wiki_text" onkeypress="return utils.ctrl_enter(event);" name="wiki_text" style="margin: 2px;width: 350px;height: 149px;" placeholder="# Here '''[[wiki]]''' text!"></textarea><br />
 		<button onClick="wiki.form();" id="submit">Save this page now</button><button onClick="wiki.clear();wiki.nowEdit=0;wiki.nowWelcome=0;">Cancle</button><br />
 		
