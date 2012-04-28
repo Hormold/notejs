@@ -140,11 +140,12 @@
 					
 					s2=t2.indexOf(q);
 					if(s!=-1){
-						t=this.hl(num.text,query);
+						t=this.hl(num.text,query);//.replace(query,"<font color='red'>"+query+"</font>");
 						list[key]=1;
 						out.push({title:num.title,text:t,time:num.time});
 					}
 					if(s2!=-1){
+						//t=num.text.replace(query,"<font color='red'>"+query+"</font>");
 						t=this.hl(num.title,query);
 						if(!list[key]){
 							out.push({title:t,text:num.text,time:num.time});
