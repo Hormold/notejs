@@ -59,12 +59,13 @@
 	}
 	
 	.n{color:#841 !important;}
+	.title{color:black;text-decoration: none;}
 	</style>
 </head>
 <body onload="wiki.init();document.onkeydown = utils.hotkeys;" onunload="wiki.save();">
 	
 	<div id="wiki_form_div">
-	<h1>NoteJS<sup class="beta">(Beta)</sup></h1>
+	<h1><a href="javascript:wiki.open2('Welcome');" class="title">NoteJS</a><sup class="beta">(Beta)</sup></h1>
 	<input type="text" placeholder="Search" id="search"><button onClick="wiki.search($('search').value);">Search</button><br /><br />
 		<input type="hidden" name="wiki_id" id="wiki_id" value="save" />
 		<input type="text" name="wiki_title" id="wiki_title" placeholder="Title of page" /> <sup style="font-size:70%">(<a href="javascript:utils.insert();" style="color:black;">Insert the current date</a>)</sup><br />
