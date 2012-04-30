@@ -23,7 +23,7 @@
 			if(localStorage.getItem(table)!==null){
 				this.content=JSON.parse(localStorage.getItem(table));
 			}else{
-				this.content=Array({title:def_name,text:"Hello, this is a NoteJS v 0.1.\nSimple wiki+html syntax support html5 (localStorage) based notebook.\nYou can not delete or rename this start page. Just edit.\nAuthor: Hormold (Nikita A.) - [http://about.hormold.ru]\n"});
+				this.content=Array({title:def_name,text:"Hello, this is a NoteJS v 0.2.\nSimple wiki+html syntax support html5 (localStorage) based notebook.\nYou can not delete or rename this start page. Just edit.\nAuthor: Hormold (Nikita A.) - [http://about.hormold.ru]\n"});
 			}
 		},
 		save: function(){
@@ -89,8 +89,8 @@
 		},
 		make: function (num){
 			if(num.title!=def_name){button="<a title='Delete' href='javascript:wiki.delete(\"<%= title %>\");'>(X)</a>";}else{button='';}
-			var compiled = _.template("<div id='wiki'><div id='title'><%= title %> <span id='buttons'>"+button+" <a href='javascript:wiki.edit(\"<%= title %>\");' title='Edit page'>(E)</a></span></div><div id='time'><%= time %></div><div id='text'><%= text %></div></div>");
-			return compiled({title : num.title,text: num.text.wiki2html(),time:num.time});
+			var tpl="<div id='wiki'><div id='title'>"+num.title+"<span id='buttons'>"+button+" <a href='javascript:wiki.edit(\""+num.title+"\");' title='Edit page'>(E)</a></span></div><div id='time'>Last modified: "+num.time+"</div><div id='text'>"+num.text.wiki2html()+"</div></div>";
+			return tpl;
 		},
 		draw: function (content){
 			n="";m=this.make;
@@ -239,7 +239,6 @@
 			}else{
 				d=decode(date);
 				if(d!==""){
-					console.log(d);
 					localStorage.setItem(table,d);
 					saving=false;
 					location.href=location.href+"?loaded=true";
