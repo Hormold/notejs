@@ -71,11 +71,17 @@
 		<input type="text" name="wiki_title" id="wiki_title" placeholder="Title of page" /> <sup style="font-size:70%">(<a href="javascript:utils.insert();" style="color:black;">Insert the current date</a>)</sup><br />
 		<textarea id="wiki_text" onkeypress="return utils.ctrl_enter(event);" name="wiki_text" style="margin: 2px;width: 350px;height: 149px;" placeholder="# Here '''[[wiki]]''' text!"></textarea><br />
 		<button onClick="wiki.form();" id="submit">Save this page now</button><button onClick="wiki.clear();wiki.nowEdit=0;wiki.nowWelcome=0;">Cancle</button><br />
-		
+		<table><tr><td>
 		<ul style="font-size:70%"><li><a href="javascript:utils.backup();">Backup</a></li>
 		<li><a href="javascript:utils.back();">Back</a> (Ctrl+Left)</li>
-		<li><a href="javascript:utils.list();">List of pages</a></li>
+		
 		</ul>
+		</td><td>
+		<ul style="font-size:70%">
+		<li><a href="javascript:utils.list();">List of pages</a></li>
+		<li><a href="javascript:utils.backup_server();">Backup to server</a> / <a href="javascript:utils.import_server();">Import from Server</a></li>
+		</ul>
+		</td></tr></table>
 		<div id="backup" title="3 fast clicks and Ctrl+C" style="width:340px;font-size:0.5em;word-wrap: break-word;"></div>
 	</div>
 	<div id="wiki" style="padding-left:390px;"></div>

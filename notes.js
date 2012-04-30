@@ -1,5 +1,8 @@
 	var def_name="Welcome";
+	var server="http://localhost/server.php";//url or false
+	var server_id="c1ee33b7fb8c0cab957515a6dc9f319f"; //ask on server
 	var table="wiki"; //in localStorage
+	var saving=true;
 	function tc(UNIX_timestamp){
 		var a = new Date(UNIX_timestamp);
 		var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -13,6 +16,7 @@
 		return time;
 	}
 	function $(id){return document.getElementById(id);}
+	function get(url){var script = document.createElement("script"); script.type  = "text/javascript"; script.src = url; document.body.appendChild(script);}
 	var wiki={
 		nowWelcome:0, nowEdit:0,nowWatching:"",
 		load: function (){
@@ -23,9 +27,10 @@
 			}
 		},
 		save: function(){
-			json=JSON.stringify(this.content);
-			
-			localStorage.setItem(table,json.replace("null,","").replace(",null",""));
+			if(saving==true){
+				json=JSON.stringify(this.content);
+				localStorage.setItem(table,json.replace("null,","").replace(",null",""));
+			}
 		},
 		add: function (title,content){
 			if(title!=="" & content!==""){
@@ -217,6 +222,35 @@
 		},
 		ctrl_enter: function(e) {
 		if (((e.keyCode == 13) || (e.keyCode == 10)) && (e.ctrlKey == true)){$("submit").click();}
+		},
+		
+		backup_server: function(){
+			if(server_id!=false && server!=false){
+				if(localStorage.getItem(table)!==null){
+					e=encode(localStorage.getItem(table));
+					url=server+"?act=set&key="+server_id+"&value="+escape(e);
+					get(url);
+				}
+			}
+		},
+		backup_server2: function(type,date){
+			if(type=='done'){
+				alert("Saved to server!");
+			}else{
+				d=decode(date);
+				if(d!==""){
+					console.log(d);
+					localStorage.setItem(table,d);
+					saving=false;
+					location.href=location.href+"?loaded=true";
+				}
+			}
+		},
+		import_server: function(){
+			if(server_id!=false && server!=false){
+				url=server+"?act=get&key="+server_id;
+				get(url);
+			}
 		}
 	};
 /*
@@ -276,8 +310,7 @@ function wiki2html() {
     
         .replace(/''(.*?)''/g, function (m, l) { // italic
             return '<em>' + l + '</em>';
-        })
-	
+        })	
     
         .replace(/[^\[](http[^\[\s]*)/g, function (m, l) { // normal link
             return '<a href="' + l + '">' + l + '</a>';
@@ -288,8 +321,6 @@ function wiki2html() {
             var link = p.shift();
             return '<a href="' + link + '">' + (p.length ? p.join(' ') : link) + '</a>';
         })
-		
-		
     
         .replace(/\[\[(.*?)\]\]/g, function (m, l) { // internal link or image
             var p = l.split(/\|/);
@@ -306,3 +337,17 @@ function wiki2html() {
 }
     
 })();
+
+// from 140byt.es with url fixes (+ to * and / to -) by me.
+function encode(str){
+	var chrTable = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789*-';
+	var e = function(a,b,c,d,e){for(d=e='';a[d|0]||(b='=',d%1);e+=b[63&c>>8-d%1*8])c=c<<8|a.charCodeAt(d-=-.75);return e}
+	var r =  e(str, chrTable, "=");
+	return r;
+}
+function decode(str){
+	var chrTable = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789*-';
+	var e = function(d,b,c,u,r,q,x){for(r=q=x='';c=d[x++];~c&&(u=q%4?u*64+c:c,q++%4)?r+=String.fromCharCode(255&u>>(-2*q&6)):0)c=b.indexOf(c);return r}
+	var r = e(str,chrTable);
+	return r;
+}
