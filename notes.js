@@ -3,8 +3,9 @@
 	var server_id="c1ee33b7fb8c0cab957515a6dc9f319f"; //ask on server
 	var table="wiki"; //in localStorage
 	var saving=true;
-	function tc(UNIX_timestamp){
-		var a = new Date(UNIX_timestamp);
+	function tc(us){
+		if(typeof(us)=='number'&&parseInt(us)==us){
+		var a = new Date(us);
 		var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 		var year = a.getFullYear();
 		var month = months[a.getMonth()];
@@ -14,16 +15,17 @@
 		var sec = a.getSeconds();
 		var time = date+' '+month+' '+year+' '+hour+':'+min+':'+sec ;
 		return time;
+		}else{time=us;}
 	}
 	function $(id){return document.getElementById(id);}
 	function get(url){var script = document.createElement("script"); script.type  = "text/javascript"; script.src = url; document.body.appendChild(script);}
 	var wiki={
 		nowWelcome:0, nowEdit:0,nowWatching:"",
 		load: function (){
-			if(localStorage.getItem(table)!==null){
+			if(localStorage.getItem(table)!==""){
 				this.content=JSON.parse(localStorage.getItem(table));
 			}else{
-				this.content=Array({title:def_name,text:"Hello, this is a NoteJS v 0.2.\nSimple wiki+html syntax support html5 (localStorage) based notebook.\nYou can not delete or rename this start page. Just edit.\nAuthor: Hormold (Nikita A.) - [http://about.hormold.ru]\n"});
+				this.content=Array({title:def_name,time:new Date().getTime(),text:"Hello, this is a NoteJS v 0.2.\nSimple wiki+html syntax support html5 (localStorage) based notebook.\nYou can not delete or rename this start page. Just edit.\nAuthor: Hormold (Nikita A.) - [http://about.hormold.ru]\n"});
 			}
 		},
 		save: function(){
@@ -88,6 +90,8 @@
 			}
 		},
 		make: function (num){
+			if(!num.time){num.time="Infinity Ago";}
+			if(typeof(num.time)=='number'&&parseInt(num.time)==num.time){num.time=tc(num.time);}
 			if(num.title!=def_name){button="<a title='Delete' href='javascript:wiki.delete(\"<%= title %>\");'>(X)</a>";}else{button='';}
 			var tpl="<div id='wiki'><div id='title'>"+num.title+"<span id='buttons'>"+button+" <a href='javascript:wiki.edit(\""+num.title+"\");' title='Edit page'>(E)</a></span></div><div id='time'>Last modified: "+num.time+"</div><div id='text'>"+num.text.wiki2html()+"</div></div>";
 			return tpl;
@@ -113,8 +117,10 @@
 		open: function(name){
 			tmp=null;
 			_.each(this.content,function(num,key){
-				if(!num.time){num.time=""}else{num.time=tc(num.time);}
+				console.log(num.time);
+				//if(!num.time){num.time=tc(new Date().getTime());}else{num.time=tc(num.time);}
 				if(num.title==name){tmp=num;}
+				
 			});
 		
 			if(tmp==null){return false;}else{
@@ -212,6 +218,23 @@
 			$("wiki").innerHTML=out;
 		},
 		
+		options: function(){
+			opt="<li><a href='javascript:utils.backup_server();'>Backup to server</a></li>";
+			opt+="<li><a href='javascript:utils.import_server();'>Import from Server</a></li>";
+			opt+="<li><a href='javascript:utils.clear();'>Clear database</a></li>";
+			arr={title:"Options",text:"<ul style='font-size:120%'>"+opt+"</ul>"};
+			out=wiki.make(arr);
+			$("wiki").innerHTML=out;
+		},
+		
+		clear: function(){
+			if(prompt("Type 'YES' (case sensitive)")=="YES"){
+				localStorage.setItem(table,"");
+				saving=false;
+				location.href=location.href;
+			}
+		},
+		
 		hotkeys: function (e) {
 		  if (!e) e = window.event;
 		  var k = e.keyCode;
@@ -252,6 +275,7 @@
 			}
 		}
 	};
+
 /*
   @author: remy sharp / http://remysharp.com
   @url: http://remysharp.com/2008/04/01/wiki-to-html-using-javascript/
@@ -306,14 +330,23 @@ function wiki2html() {
         .replace(/'''(.*?)'''/g, function (m, l) { // bold
             return '<strong>' + l + '</strong>';
         })
+		
     
         .replace(/''(.*?)''/g, function (m, l) { // italic
             return '<em>' + l + '</em>';
         })	
+		
+		.replace(/{{(.*?)}}/g, function (m, l) { // img_1
+            return '<img src="' + l + '" />';
+        })	
+		
+		.replace(/\[\[Image:(.*?)\]\]/g, function (m, l) { // italic
+            return '<img src="' + l + '" />';
+        })	
     
-        .replace(/[^\[](http[^\[\s]*)/g, function (m, l) { // normal link
+        /*.replace(/[^\[](http[^\[\s]*)/g, function (m, l) { // normal link
             return '<a href="' + l + '">' + l + '</a>';
-        })
+        })*/
     
         .replace(/[\[](http.*)[!\]]/g, function (m, l) { // external link
             var p = l.replace(/[\[\]]/g, '').split(/ /);
