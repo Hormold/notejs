@@ -60,6 +60,75 @@
 	
 	.n{color:#841 !important;}
 	.title{color:black;text-decoration: none;}
+	
+
+ol, ul {
+    margin: 0 0 18px 25px;
+}
+
+
+
+h1, h2, h3, h4 {
+    line-height: 2em;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+h3 {
+    font-size: 18px;
+}
+
+
+pre code {
+    background-color: #f8f8ff;
+
+}
+code {
+    background-color: #FBBF69;
+    color: rgba(0, 0, 0, 0.75);
+    padding: 1px 3px;
+}
+
+code, pre {
+    padding: 0 3px 2px;
+    font-family: Monaco,Andale Mono,Courier New,monospace;
+    font-size: 12px;
+    border-radius: 3px;
+}
+
+
+pre {
+    background-color: #f8f8ff;
+    display: block;
+    
+    margin: 0 0 18px;
+    line-height: 18px;
+    font-size: 12px;
+    border: 1px solid #CCC;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    
+    border-radius: 3px;
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+#code, #preview {
+    height: 400px;
+    width: 300px;
+    border: 1px solid #666;
+    overflow: auto;
+    float: left;
+    margin: 5px;
+    padding: 3px;
+}
+blockquote {
+    margin-bottom: 18px;
+    border-left: 5px solid #EEE;
+    padding-left: 15px;
+}
 	</style>
 </head>
 <body onload="wiki.init();document.onkeydown = utils.hotkeys;" onunload="wiki.save();">
